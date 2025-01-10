@@ -1,0 +1,58 @@
+a:
+INSERT INTO locations (name, point)
+VALUES ('New York', ST_MakePoint(:x, :y));
+
+b:
+INSERT INTO locations (name, point)
+VALUES ('New York', ST_SetSRID(ST_MakePointM(:x, :y, :m), :srid));
+
+c:
+INSERT INTO locations (name, point)
+VALUES ('New York', ST_SetSRID(ST_Point(:x, :y), :srid::INTEGER));
+
+d:
+INSERT INTO locations (name, point)
+VALUES ('New York', ST_SetSRID(ST_PointZ(:x, :y, :z, :srid), :srid::INTEGER));
+
+e:
+INSERT INTO locations (name, point)
+VALUES ('New York', ST_SetSRID(ST_PointM(:x, :y, :m, :srid), :srid::INTEGER));
+
+f:
+INSERT INTO locations (name, point)
+VALUES ('New York', ST_SetSRID(ST_PointZM(:x, :y, :z, :m), :srid::INTEGER));
+
+g:
+SELECT ST_MakePoint(-71.1043443253471, 42.3150676015829);
+
+h:
+SELECT ST_MakePoint(?, ?);
+
+i:
+SELECT ST_MakePoint(:x, :y);
+
+j:
+SELECT ST_MakePointM(-71.1043443253471, 42.3150676015829, :m);
+
+k:
+SELECT ST_PointZM(-71.104, 42.315, 3.4, 4.5, 4326);
+
+l:
+SELECT ST_PointZM(-71.104, 42.315, 3.4, :m);
+
+m:
+SELECT ST_DWithin(
+  ST_GeographyFromText('SRID=4326;POINT(13.405 52.52)'),
+  ST_GeographyFromText('SRID=4326;POINT(19.945 50.0647)'),
+  4000,
+  TRUE
+);
+
+selectPoints:
+SELECT point
+FROM locations;
+
+selectLocationByDistance:
+SELECT id, name
+FROM locations
+WHERE ST_DWithin(point::geography, :geometry::geometry, :distanceMeters::REAL, :useSpheroid::BOOLEAN);
